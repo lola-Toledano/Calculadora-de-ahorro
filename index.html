@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora de Ahorros · Interés Compuesto</title>
+  <meta name="description"
+    content="Calcula la evolución de tus ahorros con interés compuesto y aportaciones mensuales. Visualiza tu capital con gráficos donuts claros." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- ████ HEADER ████ -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <span class="header-icon" aria-hidden="true">📈</span>
+        <div>
+          <h1>Calculadora de Ahorros</h1>
+          <p class="header-subtitle">Interés compuesto · Aportaciones mensuales</p>
+        </div>
+      </div>
+      <button id="btn-reset" class="btn-secondary" type="button" title="Restaurar valores por defecto">
+        ↺ Restablecer
+      </button>
+    </div>
+  </header>
+
+  <main class="app-main">
+
+    <!-- ████ PANEL DE INPUTS ████ -->
+    <section class="panel inputs-panel" aria-label="Panel de parámetros">
+      <h2 class="panel-title">Tus datos</h2>
+
+      <div class="inputs-grid">
+
+        <!-- Dinero actual -->
+        <div class="input-group">
+          <label for="inp-pv" class="input-label">
+            Dinero actual (€)
+            <span class="input-hint">Capital que tienes hoy</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-prefix">€</span>
+            <input id="inp-pv" type="number" min="0" step="100" value="10000" placeholder="10000" autocomplete="off"
+              aria-describedby="err-pv" />
+          </div>
+          <span id="err-pv" class="input-error" role="alert" aria-live="polite"></span>
+        </div>
+
+        <!-- Edad actual -->
+        <div class="input-group">
+          <label for="inp-edad" class="input-label">
+            Edad actual
+            <span class="input-hint">Entre 0 y 120 años</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-prefix">👤</span>
+            <input id="inp-edad" type="number" min="0" max="120" step="1" value="30" placeholder="30" autocomplete="off"
+              aria-describedby="err-edad" />
+          </div>
+          <span id="err-edad" class="input-error" role="alert" aria-live="polite"></span>
+        </div>
+
+        <!-- Interés anual -->
+        <div class="input-group">
+          <label for="inp-interes" class="input-label">
+            Interés anual (%)
+            <span class="input-hint">Entre 0 % y 30 %</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-prefix">%</span>
+            <input id="inp-interes" type="number" min="0" max="30" step="0.1" value="7" placeholder="7"
+              autocomplete="off" aria-describedby="err-interes" />
+          </div>
+          <span id="err-interes" class="input-error" role="alert" aria-live="polite"></span>
+        </div>
+
+        <!-- Aportación mensual -->
+        <div class="input-group">
+          <label for="inp-pmt" class="input-label">
+            Aportación mensual (€)
+            <span class="input-hint">Lo que aportas cada mes</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-prefix">€</span>
+            <input id="inp-pmt" type="number" min="0" step="50" value="200" placeholder="200" autocomplete="off"
+              aria-describedby="err-pmt" />
+          </div>
+          <span id="err-pmt" class="input-error" role="alert" aria-live="polite"></span>
+        </div>
+
+        <!-- Edad objetivo -->
+        <div class="input-group">
+          <label for="inp-objetivo" class="input-label">
+            Edad objetivo
+            <span class="input-hint">¿A qué edad quieres retirarte?</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-prefix">🎯</span>
+            <input id="inp-objetivo" type="number" min="1" max="120" step="1" value="65" placeholder="65"
+              autocomplete="off" aria-describedby="err-objetivo" />
+          </div>
+          <span id="err-objetivo" class="input-error" role="alert" aria-live="polite"></span>
+        </div>
+
+        <!-- Meta de ahorro (opcional) -->
+        <div class="input-group">
+          <label for="inp-meta" class="input-label">
+            Meta de ahorro (€) <span class="badge-optional">opcional</span>
+            <span class="input-hint">¿Cuándo quieres alcanzarla?</span>
+          </label>
+          <div class="input-wrapper">
+            <span class="input-prefix">🏆</span>
+            <input id="inp-meta" type="number" min="0" step="1000" value="" placeholder="P. ej. 500000"
+              autocomplete="off" aria-describedby="err-meta" />
+          </div>
+          <span id="err-meta" class="input-error" role="alert" aria-live="polite"></span>
+        </div>
+
+      </div><!-- /.inputs-grid -->
+
+      <!-- Fallback: Años a simular (visible solo cuando edad >= objetivo) -->
+      <div id="fallback-section" class="fallback-section" hidden>
+        <div class="alert-warning" role="alert">
+          <span class="alert-icon">⚠️</span>
+          <div>
+            <strong>Edad actual ≥ Edad objetivo.</strong>
+            <span>La simulación no puede hacerse con cero o menos años. Indica cuántos años quieres simular:</span>
+          </div>
+        </div>
+        <div class="input-group input-group--inline">
+          <label for="inp-años" class="input-label">Años a simular</label>
+          <div class="input-wrapper">
+            <span class="input-prefix">📅</span>
+            <input id="inp-años" type="number" min="1" max="80" step="1" value="10" placeholder="10"
+              autocomplete="off" />
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button id="btn-calcular" class="btn-primary" type="button">
+          Calcular <span aria-hidden="true">→</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ████ ÁREA DE RESULTADOS ████ -->
+    <div id="results-area" class="results-area" hidden aria-live="polite">
+
+      <!-- Tarjetas de resumen -->
+      <section class="panel" aria-label="Resumen de resultados">
+        <h2 class="panel-title">Resumen</h2>
+
+        <!-- Badge meta -->
+        <div id="meta-badge-row" class="meta-badge-row" hidden>
+          <span id="meta-badge" class="meta-badge"></span>
+          <span id="meta-detail" class="meta-detail"></span>
+        </div>
+
+        <div class="cards-grid" role="list">
+
+          <article class="card card--final" role="listitem">
+            <div class="card-icon" aria-hidden="true">💰</div>
+            <div class="card-body">
+              <dt class="card-label">Capital final estimado</dt>
+              <dd id="card-fv" class="card-value">—</dd>
+            </div>
+          </article>
+
+          <article class="card card--principal" role="listitem">
+            <div class="card-icon" aria-hidden="true">📦</div>
+            <div class="card-body">
+              <dt class="card-label">Principal total (invertido)</dt>
+              <dd id="card-principal" class="card-value">—</dd>
+            </div>
+          </article>
+
+          <article class="card card--intereses" role="listitem">
+            <div class="card-icon" aria-hidden="true">📈</div>
+            <div class="card-body">
+              <dt class="card-label">Intereses ganados</dt>
+              <dd id="card-intereses" class="card-value">—</dd>
+            </div>
+          </article>
+
+          <article class="card card--aportaciones" role="listitem">
+            <div class="card-icon" aria-hidden="true">🔄</div>
+            <div class="card-body">
+              <dt class="card-label">Aportaciones totales</dt>
+              <dd id="card-aportaciones" class="card-value">—</dd>
+            </div>
+          </article>
+
+          <article class="card card--años" role="listitem">
+            <div class="card-icon" aria-hidden="true">📅</div>
+            <div class="card-body">
+              <dt class="card-label">Años simulados</dt>
+              <dd id="card-años" class="card-value">—</dd>
+            </div>
+          </article>
+
+        </div><!-- /.cards-grid -->
+      </section>
+
+      <!-- Gráficos donuts -->
+      <section class="panel charts-panel" aria-label="Gráficos de desglose">
+        <h2 class="panel-title">Desglose visual</h2>
+
+        <div class="charts-row">
+
+          <!-- Donut 1: Principal vs Intereses -->
+          <figure class="chart-figure" aria-label="Gráfico 1: Capital invertido vs intereses ganados">
+            <figcaption class="chart-title">
+              <span class="chart-title-icon" aria-hidden="true">⚖️</span>
+              Principal vs Intereses
+            </figcaption>
+            <div class="chart-wrap">
+              <canvas id="chart-pi" role="img"
+                aria-label="Donut: porcentaje de principal e intereses sobre el capital final"></canvas>
+            </div>
+          </figure>
+
+          <!-- Donut 2: Dinero inicial vs Aportaciones -->
+          <figure class="chart-figure" aria-label="Gráfico 2: Desglose del principal">
+            <figcaption class="chart-title">
+              <span class="chart-title-icon" aria-hidden="true">🔍</span>
+              Desglose del Principal
+            </figcaption>
+            <div class="chart-wrap">
+              <canvas id="chart-da" role="img"
+                aria-label="Donut: porcentaje de dinero inicial vs aportaciones mensuales acumuladas"></canvas>
+            </div>
+          </figure>
+
+        </div><!-- /.charts-row -->
+
+        <!-- Tabla accesible como alternativa a los gráficos -->
+        <details class="tabla-accesible">
+          <summary>Ver datos en tabla (alternativa accesible)</summary>
+          <table id="tabla-resumen" aria-label="Datos del cálculo en formato tabla">
+            <thead>
+              <tr>
+                <th scope="col">Concepto</th>
+                <th scope="col">Importe</th>
+                <th scope="col">% del Total</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-body">
+            </tbody>
+          </table>
+        </details>
+
+      </section>
+
+    </div><!-- /#results-area -->
+
+  </main>
+
+  <footer class="app-footer">
+    <p>Calculadora de Ahorros · Solo orientativo, sin asesoramiento financiero.</p>
+  </footer>
+
+  <!-- Chart.js 4 via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <!-- Módulo de cálculo -->
+  <script src="calc.js"></script>
+  <!-- Coordinador de UI -->
+  <script src="main.js"></script>
+
+</body>
+
+</html>

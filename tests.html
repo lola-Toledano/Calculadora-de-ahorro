@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tests — Calculadora de Ahorros</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #f0f4ff;
+            color: #1e293b;
+            padding: 32px 20px;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: #1e40af;
+        }
+
+        .subtitle {
+            color: #64748b;
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+        }
+
+        .resumen {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .badge--pass {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1.5px solid #6ee7b7;
+        }
+
+        .badge--fail {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1.5px solid #fca5a5;
+        }
+
+        .badge--total {
+            background: #e0e7ff;
+            color: #3730a3;
+            border: 1.5px solid #a5b4fc;
+        }
+
+        table {
+            width: 100%;
+            max-width: 900px;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, .10);
+        }
+
+        thead th {
+            background: #1e40af;
+            color: white;
+            padding: 12px 18px;
+            text-align: left;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tbody td {
+            padding: 11px 18px;
+            border-bottom: 1px solid #e2e8f4;
+            font-size: 0.88rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .row--pass td:first-child::before {
+            content: '✅ ';
+        }
+
+        .row--fail td:first-child::before {
+            content: '❌ ';
+        }
+
+        .row--pass {
+            background: #f0fdf4;
+        }
+
+        .row--fail {
+            background: #fff5f5;
+        }
+
+        .detalles {
+            color: #ef4444;
+            font-size: 0.8rem;
+            font-style: italic;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 28px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🧪 Tests Unitarios — calc.js</h1>
+    <p class="subtitle">Suite de validación para el módulo de cálculo de la Calculadora de Ahorros.</p>
+
+    <div class="resumen" id="resumen"></div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Descripción del test</th>
+                <th>Resultado</th>
+                <th>Detalles</th>
+            </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+    </table>
+
+    <a href="index.html" class="back">← Volver a la Calculadora</a>
+
+    <!-- Módulo de cálculo primero -->
+    <script src="calc.js"></script>
+    <!-- Suite de tests -->
+    <script src="tests.js"></script>
+    <!-- Renderizado de resultados -->
+    <script>
+        const resultados = window.__testResultados || [];
+        const tbody = document.getElementById('tbody');
+        const resumenEl = document.getElementById('resumen');
+
+        let passed = 0, failed = 0;
+
+        resultados.forEach(r => {
+            if (r.ok) passed++; else failed++;
+            const tr = document.createElement('tr');
+            tr.className = r.ok ? 'row--pass' : 'row--fail';
+            tr.innerHTML = `
+        <td>${r.descripcion}</td>
+        <td>${r.ok ? 'PASS' : 'FAIL'}</td>
+        <td class="detalles">${r.detalles || ''}</td>
+      `;
+            tbody.appendChild(tr);
+        });
+
+        resumenEl.innerHTML = `
+      <span class="badge badge--total">Total: ${resultados.length}</span>
+      <span class="badge badge--pass">✅ Pasados: ${passed}</span>
+      ${failed > 0 ? `<span class="badge badge--fail">❌ Fallidos: ${failed}</span>` : ''}
+    `;
+
+        document.title = `Tests (${passed}/${resultados.length} ✅) — Calculadora de Ahorros`;
+    </script>
+
+</body>
+
+</html>
